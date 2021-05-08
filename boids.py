@@ -124,11 +124,15 @@ class Boid():
         return steering  
     
     def infection(self, boids):
-        if self.infected == True:
-            total = 0
-            for boid in boids:
-                if np.linalg.norm(boid.position - self.position) < self.perception:
-                    boid.infected = True
+        rng = default_rng()
+        chance = rng.integers(low=0, high=1000)
+        if chance >= 500:
+            if self.infected == True:
+                total = 0
+                for boid in boids:
+                    if np.linalg.norm(boid.position - self.position) < self.perception:
+                        boid.infected = True
+
     def livesordie(self):
         rng = default_rng()
         chance = rng.integers(low=0, high=1000)
@@ -136,4 +140,4 @@ class Boid():
             if self.infected == True :
                 self.alive = False
             
-                    
+                
