@@ -13,7 +13,7 @@ class Data():
         for boid in flock:
             if boid.infected == True:
                 infecteds += 1
-            else:
+            elif boid.infected == False and self.curado == False:
                 healthies += 1
         datanow = np.array([infecteds, healthies])
         data.append(datanow)

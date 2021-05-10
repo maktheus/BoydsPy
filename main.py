@@ -2,7 +2,7 @@ from p5 import *
 import numpy as np
 from boids import Boid
 from data import Data
-n=25;
+n=30;
 width = 1000
 height = 1000
 flock=[]
@@ -29,9 +29,9 @@ def draw():
     for boid in flock:
         boid.edges()
         boid.apply_behaviour(flock)
-        boid.update()
-        boid.show()
         boid.infection(flock)
+        boid.update() 
+        boid.show()
         boid.livesordie()
     Data.count(flock)
   

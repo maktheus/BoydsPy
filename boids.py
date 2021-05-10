@@ -14,9 +14,11 @@ class Boid():
         self.max_speed = 5
         self.perception = 100
         
-
+        #Flags
+        self.curado = False
         self.alive =True
         self.infected=infected
+
         self.width = width
         self.height = height
 
@@ -34,14 +36,21 @@ class Boid():
 
     def show(self):
         stroke(255)
-        if self.infected == False:
+        if self.infected == False and self.alive == True and self.curado== False:
+            #blue
             fill(0, 0, 255)
             circle((self.position.x, self.position.y), 10,mode=None)
-        elif self.infected == True and self.alive == True:
+        elif self.infected == True and self.alive == True and self.curado == False:
+            #red
             fill(255, 0, 0)
             circle((self.position.x, self.position.y), 10,mode=None)
         elif self.alive == False:
+            #Dead
             fill(128, 128, 128)
+            circle((self.position.x, self.position.y), 10,mode=None)
+        elif self.curado == True and self.alive == True:
+            #Curado
+            fill(153, 51, 153)
             circle((self.position.x, self.position.y), 10,mode=None)
             
     def apply_behaviour(self, boids):
@@ -70,9 +79,10 @@ class Boid():
         total = 0
         avg_vector = Vector(*np.zeros(2))
         for boid in boids:
-            if np.linalg.norm(boid.position - self.position) < self.perception:
-                avg_vector += boid.velocity
-                total += 1
+            if boid.alive == True:
+                if np.linalg.norm(boid.position - self.position) < self.perception:
+                    avg_vector += boid.velocity
+                    total += 1
         if total > 0:
             avg_vector /= total
             avg_vector = Vector(*avg_vector)
@@ -86,9 +96,10 @@ class Boid():
         total = 0
         center_of_mass = Vector(*np.zeros(2))
         for boid in boids:
-            if np.linalg.norm(boid.position - self.position) < self.perception:
-                center_of_mass += boid.position
-                total += 1
+            if boid.alive == True:
+                if np.linalg.norm(boid.position - self.position) < self.perception:
+                    center_of_mass += boid.position
+                    total += 1
         if total > 0:
             center_of_mass /= total
             center_of_mass = Vector(*center_of_mass)
@@ -106,12 +117,14 @@ class Boid():
         total = 0
         avg_vector = Vector(*np.zeros(2))
         for boid in boids:
-            distance = np.linalg.norm(boid.position - self.position)
-            if self.position != boid.position and distance < self.perception:
-                diff = self.position - boid.position
-                diff /= distance
-                avg_vector += diff
-                total += 1
+            if boid.alive == True:
+                distance = np.linalg.norm(boid.position - self.position)
+                if self.position != boid.position and distance < self.perception:
+                    diff = self.position - boid.position
+                    diff /= distance
+                    avg_vector += diff
+                    total += 1
+                    
         if total > 0:
             avg_vector /= total
             avg_vector = Vector(*avg_vector)
@@ -126,18 +139,26 @@ class Boid():
     def infection(self, boids):
         rng = default_rng()
         chance = rng.integers(low=0, high=1000)
-        if chance >= 500:
+        if chance >= 500 and self.curado == False :
             if self.infected == True:
-                total = 0
                 for boid in boids:
                     if np.linalg.norm(boid.position - self.position) < self.perception:
                         boid.infected = True
 
+
     def livesordie(self):
-        rng = default_rng()
-        chance = rng.integers(low=0, high=1000)
-        if chance >= 995:
-            if self.infected == True :
-                self.alive = False
-            
+        if self.infected == True:
+            rng = default_rng()
+            chance = rng.integers(low=0, high=1000)
+            secondchance= rng.integers(low=0, high=10000)
+            if chance >= 995 and self.curado == False:
+                    self.alive = False
+                    self.infected = False
+
+            elif secondchance >= 9900:
+                if self.infected == True and self.alive == True:
+                    print("Curado") 
+                    self.infected = False
+                    self.curado = True
                 
+                    
