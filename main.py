@@ -1,20 +1,24 @@
 from p5 import *
 import numpy as np
+from numpy.random import default_rng
 from boids import Boid
 from data import Data
 n=30;
-width = 1000
-height = 1000
+width = 1920
+height = 1080
 flock=[]
 infected=[]
-
+rng = default_rng()
 
 
 for i in range(n):
+    x = rng.integers(low=0, high=1920)
+    y = rng.integers(low=0, high=1080)
+
     if i==0:
-        flock.append(Boid(*np.random.rand(2)*1000, width, height,infected=True,curado=False,alive=True))
+        flock.append(Boid(x,y, width, height,infected=True,curado=False,alive=True))
     else:
-        flock.append(Boid(*np.random.rand(2)*1000, width, height,infected=False,curado=False,alive=True))
+        flock.append(Boid(x,y, width, height,infected=False,curado=False,alive=True))
 
 def setup():
     #this happens just once
