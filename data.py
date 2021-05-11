@@ -19,11 +19,12 @@ class Data():
         # datetime object containing current date and time
         # dd/mm/YY H:M:S
         for boid in flock:
-            if boid.infected == True and boid.curado == False:
+          
+            if boid.infected == True and boid.curado == False and boid.alive == True:
                 infecteds += 1
-            elif boid.infected == False and boid.curado == False:
+            elif boid.infected == False and boid.curado == False and boid.alive == True:
                 healthies += 1
-            elif boid.curado == True:
+            elif boid.curado == True and boid.alive == True:
                 curado +=1
             elif boid.alive == False:
                 dead += 1
@@ -42,7 +43,7 @@ class Data():
             "Curados":data_curados,
             })
         graphic.to_csv('Teste.csv',index=False)
-        #print(graphic)
+        print(graphic)
         # datanow = np.array([infecteds, healthies])
         # data.append(datanow)
         infecteds = 0
