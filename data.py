@@ -43,7 +43,7 @@ class Data():
             "Curados":data_curados,
             })
         graphic.to_csv('Teste.csv',index=False)
-        print(graphic)
+        #print(graphic)
         # datanow = np.array([infecteds, healthies])
         # data.append(datanow)
         infecteds = 0

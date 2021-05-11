@@ -9,7 +9,7 @@ height = 1080
 flock=[]
 infected=[]
 rng = default_rng()
-
+frames=0
 
 for i in range(n):
     x = rng.integers(low=0, high=1920)
@@ -26,8 +26,8 @@ def setup():
 
 
 def draw():
-    global flock
-
+    global flock,frames
+  
     background(30, 30, 47)
 
     for boid in flock:

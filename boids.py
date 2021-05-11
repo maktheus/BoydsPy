@@ -1,7 +1,7 @@
 from p5 import *
 from numpy.random import default_rng
 import numpy as np
-
+frames=0
 class Boid():
     
     def __init__(self, x, y, width, height,infected,curado,alive):
@@ -18,13 +18,17 @@ class Boid():
         self.curado = curado
         self.alive = alive
         self.infected= infected
-
+        #Days
+        self.days =0
         self.width = width
         self.height = height
-
+     
 
 
     def update(self):
+        global frames
+
+        frames+=1
         if self.alive == True:
             self.position += self.velocity
             self.velocity += self.acceleration
@@ -35,6 +39,7 @@ class Boid():
             self.acceleration = Vector(*np.zeros(2))
 
     def show(self):
+
         stroke(255)
         if self.infected == False and self.alive == True and self.curado== False:
             #blue
@@ -139,10 +144,12 @@ class Boid():
     def infection(self, boids):
         rng = default_rng()
         chance = rng.integers(low=0, high=1000)
-        if chance >= 500 and self.curado == False :
+        if chance >= 913 and self.curado == False and frames - self.days >240:
             if self.infected == True:
                 for boid in boids:
                     if np.linalg.norm(boid.position - self.position) < self.perception:
+                        boid.days = frames
+                       
                         boid.infected = True
 
 
@@ -150,15 +157,14 @@ class Boid():
         if self.infected == True:
             rng = default_rng()
             chance = rng.integers(low=0, high=1000)
-            secondchance= rng.integers(low=0, high=10000)
-            if chance >= 995 and self.curado == False:
-                    self.alive = False
-                    self.infected = False
-
-            elif secondchance >= 9900:
-                if self.infected == True and self.alive == True:
-                    print("Curado") 
-                    self.infected = False
-                    self.curado = True
-                
+            secondchance= rng.integers(low=0, high=1000)
+            if  frames - self.days >720:
+                if chance >= 966 and self.curado == False:
+                        self.alive = False
+                        self.infected = False
+                elif secondchance >= 34: 
+                    if self.infected == True and self.alive == True:
+                        self.infected = False
+                        self.curado = True
                     
+                        
