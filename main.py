@@ -12,9 +12,9 @@ infected=[]
 
 for i in range(n):
     if i==0:
-        flock.append(Boid(*np.random.rand(2)*1000, width, height,infected=True))
+        flock.append(Boid(*np.random.rand(2)*1000, width, height,infected=True,curado=False,alive=True))
     else:
-        flock.append(Boid(*np.random.rand(2)*1000, width, height,infected=False))
+        flock.append(Boid(*np.random.rand(2)*1000, width, height,infected=False,curado=False,alive=True))
 
 def setup():
     #this happens just once

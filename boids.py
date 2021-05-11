@@ -4,7 +4,7 @@ import numpy as np
 
 class Boid():
     
-    def __init__(self, x, y, width, height,infected):
+    def __init__(self, x, y, width, height,infected,curado,alive):
         self.position = Vector(x, y)
         vec = (np.random.rand(2) - 0.5)*10
         self.velocity = Vector(*vec)
@@ -15,9 +15,9 @@ class Boid():
         self.perception = 100
         
         #Flags
-        self.curado = False
-        self.alive =True
-        self.infected=infected
+        self.curado = curado
+        self.alive = alive
+        self.infected= infected
 
         self.width = width
         self.height = height
@@ -124,7 +124,7 @@ class Boid():
                     diff /= distance
                     avg_vector += diff
                     total += 1
-                    
+
         if total > 0:
             avg_vector /= total
             avg_vector = Vector(*avg_vector)
