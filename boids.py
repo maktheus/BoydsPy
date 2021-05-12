@@ -27,7 +27,6 @@ class Boid():
 
     def update(self):
         global frames
-
         frames+=1
         if self.alive == True:
             self.position += self.velocity
@@ -149,7 +148,6 @@ class Boid():
                 for boid in boids:
                     if np.linalg.norm(boid.position - self.position) < self.perception:
                         boid.days = frames
-                       
                         boid.infected = True
 
 

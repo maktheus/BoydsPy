@@ -30,6 +30,7 @@ def draw():
   
     background(30, 30, 47)
 
+
     for boid in flock:
         boid.edges()
         boid.apply_behaviour(flock)
