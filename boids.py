@@ -2,6 +2,7 @@ from p5 import *
 from numpy.random import default_rng
 import numpy as np
 frames=0
+daystartofusingmask=0
 class Boid():
     
     def __init__(self, x, y, width, height,infected,curado,alive):
@@ -9,15 +10,18 @@ class Boid():
         vec = (np.random.rand(2) - 0.5)*10
         self.velocity = Vector(*vec)
         vec = (np.random.rand(2) - 0.5)/2
+
         self.acceleration = Vector(*vec)
         self.max_force = 0.3
         self.max_speed = 5
         self.perception = 100
+        self.size =8
         
         #Flags
         self.curado = curado
         self.alive = alive
         self.infected= infected
+        self.usingmask = False
         #Days
         self.days =0
         self.width = width
@@ -34,38 +38,46 @@ class Boid():
             #limit
             if np.linalg.norm(self.velocity) > self.max_speed:
                 self.velocity = self.velocity / np.linalg.norm(self.velocity) * self.max_speed
-
             self.acceleration = Vector(*np.zeros(2))
 
     def show(self):
-
+        size=8
         stroke(255)
-        if self.infected == False and self.alive == True and self.curado== False:
+        if self.infected == False and self.alive == True and self.curado== False and self.usingmask == False:
             #blue
             fill(0, 0, 255)
-            circle((self.position.x, self.position.y), 10,mode=None)
+            circle((self.position.x, self.position.y), size,mode=None)
+            
+        if self.infected == False and self.alive == True and self.curado== False and self.usingmask == True:
+            #Mascara AZUL
+            fill(0, 0, 255)
+            circle((self.position.x, self.position.y), size,mode=None)
+            fill(255, 255, 255)
+            circle((self.position.x, self.position.y+1), 6,mode=None)
         elif self.infected == True and self.alive == True and self.curado == False:
             #red
             fill(255, 0, 0)
-            circle((self.position.x, self.position.y), 10,mode=None)
+            circle((self.position.x, self.position.y), size,mode=None)
         elif self.alive == False:
             #Dead
             fill(128, 128, 128)
-            circle((self.position.x, self.position.y), 10,mode=None)
+            circle((self.position.x, self.position.y), size,mode=None)
         elif self.curado == True and self.alive == True:
             #Curado
             fill(153, 51, 153)
-            circle((self.position.x, self.position.y), 10,mode=None)
+            circle((self.position.x, self.position.y), size,mode=None)
             
     def apply_behaviour(self, boids):
         if self.alive == True:
+            separation = self.separation(boids)
             alignment = self.align(boids)
             cohesion = self.cohesion(boids)
-            separation = self.separation(boids)
-        
+
+            #result = separation + alignment + cohesion
+
+            self.acceleration += separation
             self.acceleration += alignment
             self.acceleration += cohesion
-            self.acceleration += separation
 
     def edges(self):
         if self.position.x > self.width:
@@ -78,6 +90,7 @@ class Boid():
         elif self.position.y < 0:
             self.position.y = self.height
 
+
     def align(self, boids):
         steering = Vector(*np.zeros(2))
         total = 0
@@ -89,7 +102,6 @@ class Boid():
                     total += 1
         if total > 0:
             avg_vector /= total
-            avg_vector = Vector(*avg_vector)
             avg_vector = (avg_vector / np.linalg.norm(avg_vector)) * self.max_speed
             steering = avg_vector - self.velocity
 
@@ -128,7 +140,7 @@ class Boid():
                     diff /= distance
                     avg_vector += diff
                     total += 1
-
+                    
         if total > 0:
             avg_vector /= total
             avg_vector = Vector(*avg_vector)
@@ -137,20 +149,22 @@ class Boid():
             steering = avg_vector - self.velocity
             if np.linalg.norm(steering) > self.max_force:
                 steering = (steering /np.linalg.norm(steering)) * self.max_force
-
         return steering  
     
     def infection(self, boids):
         rng = default_rng()
         chance = rng.integers(low=0, high=1000)
-        if chance >= 913 and self.curado == False and frames - self.days >240:
-            if self.infected == True:
-                for boid in boids:
+        if self.infected == True:
+            for boid in boids:
+                if chance >= 700 and boid.curado == False and frames - self.days >240 and boid.usingmask == False:
+                    if np.linalg.norm(boid.position - self.position) < self.perception:
+                        boid.days = frames    
+                        boid.infected = True
+                if chance >= 900 and boid.curado == False and frames - self.days >240 and boid.usingmask == True:
                     if np.linalg.norm(boid.position - self.position) < self.perception:
                         boid.days = frames
                         boid.infected = True
-
-
+                
     def livesordie(self):
         if self.infected == True:
             rng = default_rng()
@@ -164,5 +178,21 @@ class Boid():
                     if self.infected == True and self.alive == True:
                         self.infected = False
                         self.curado = True
-                    
-                        
+    def Usemask(self):
+        rng =default_rng()
+        chance = rng.integers(low=0, high=1000)
+        secondchance= rng.integers(low=0, high=1000)
+        if chance >= 900 and frames >=2000:
+            self.usingmask = True
+  
+        if secondchance >= 900 and self.usingmask == True:
+            self.usingmask = False
+    
+    def colision(self, boids):
+        for boid in boids:
+            if np.linalg.norm(boid.position - self.position) < self.size*2 and self != boid:
+                velocity = self.velocity - boid.velocity
+                distance = self.position - boid.position
+                if(velocity*distance >=0):
+                    print("contato")
+                

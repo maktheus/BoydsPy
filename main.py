@@ -3,17 +3,17 @@ import numpy as np
 from numpy.random import default_rng
 from boids import Boid
 from data import Data
-n=30;
-width = 1920
-height = 1080
-flock=[]
+n = 10;
+width = 500
+height =  500
+flock=[]    
 infected=[]
 rng = default_rng()
 frames=0
 
 for i in range(n):
-    x = rng.integers(low=0, high=1920)
-    y = rng.integers(low=0, high=1080)
+    x = rng.integers(low=0, high=500)
+    y = rng.integers(low=0, high=500)
 
     if i==0:
         flock.append(Boid(x,y, width, height,infected=True,curado=False,alive=True))
@@ -38,6 +38,8 @@ def draw():
         boid.update() 
         boid.show()
         boid.livesordie()
+        boid.Usemask()
+        #boid.colision(flock)
     Data.count(flock)
   
 
