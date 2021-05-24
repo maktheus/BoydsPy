@@ -1,4 +1,6 @@
 import numpy as np
+import random
 
-p = np.random.random(100)
+p = random.randint(1,128)
+
 print(p)
